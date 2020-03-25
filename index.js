@@ -1,4 +1,4 @@
-const { Engine, Render, Runner, World, Bodies } = Matter;
+const { Engine, Render, Runner, World, Bodies, Body } = Matter;
 
 const cells = 10;
 const width = 600;
@@ -7,6 +7,7 @@ const height = 600;
 const unitLength = width / cells;
 
 const engine = Engine.create();
+engine.world.gravity.y = 0;
 const { world } = engine;
 const render = Render.create({
 	// where we want to show the canvas in our page
@@ -121,7 +122,6 @@ const stepThroughCell = (row, column) => {
 };
 
 stepThroughCell(startRow, startColumn);
-console.log(verticals, horizontals);
 
 horizontals.forEach((row, rowIndex) => {
 	row.forEach((open, columnIndex) => {
@@ -166,7 +166,25 @@ const goal = Bodies.rectangle(
 World.add(world, goal);
 
 // Ball
-const ball = Bodies.circle(unitLength / 2, unitLength / 2, unitLength * 0.25, {
-	isStatic: true
-});
+const ball = Bodies.circle(unitLength / 2, unitLength / 2, unitLength * 0.25);
 World.add(world, ball);
+
+document.addEventListener("keydown", event => {
+	const { x, y } = ball.velocity;
+	switch (event.keyCode) {
+		case 87:
+			Body.setVelocity(ball, { x, y: y - 5 });
+			break;
+		case 83:
+			Body.setVelocity(ball, { x, y: y + 5 });
+			break;
+		case 68:
+			Body.setVelocity(ball, { x: x + 5, y });
+			break;
+		case 65:
+			Body.setVelocity(ball, { x: x - 5, y });
+			break;
+		default:
+			break;
+	}
+});
